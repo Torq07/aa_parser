@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.version     = AaParser::VERSION
   s.authors     = ["Denis Presnov"]
   s.email       = ["torq07@gmail.com"]
-  s.homepage    = "https://github.com/Torq07/activeadmin_parser"
+  s.homepage    = "https://github.com/Torq07/aa_parser"
   s.summary     = "Parse for activeAdmin"
   s.description = "Parser fro AA"
   s.license     = "MIT"
