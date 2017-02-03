@@ -1,9 +1,11 @@
 require "activeadmin"
 
 module AaParser
-	def parse
-		puts 'Run parsing'
+	module Parser
+		def parse
+			puts 'Run parsing'
+		end
 	end
 end
 
-ActiveAdmin::DSL.send :include, AaParser
+ActiveAdmin::DSL.send :include, AaParser::Parser
