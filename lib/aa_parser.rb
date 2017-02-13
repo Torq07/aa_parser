@@ -6,7 +6,7 @@ require 'open-uri'
 require 'nokogiri'
 require "activeadmin"
 
-module Parser
+module Aa_parser
 	class Aa_parser
 		
 		include HTTParty
@@ -38,6 +38,6 @@ module Parser
 	end
 end
 
-ActiveAdmin::DSL.send :include, Parser
+ActiveAdmin::DSL.send :include, Aa_parser
 
 
