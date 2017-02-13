@@ -43,7 +43,7 @@ class OldCatalog
 			
 			# Save second level category image
 			imgs = page.css('div.catalog_page img')
-			category[:image] = imgs.first['src'] if imgs.any?
+			category[:image] = "#{@url}#{imgs.first['src']}" if imgs.any?
 
 			# Save second level category description
 			category[:description] = page.css('div.catalog_page p')
@@ -56,7 +56,7 @@ class OldCatalog
 				#if no catalog links then third category links is product link
 				if category_links?(cat)
 
-					cat_url = "#{@url}/#{cat.at('strong').parent['href']}"
+					cat_url = "#{@url}#{cat.at('strong').parent['href']}"
 
 					# Parsing image,description and product list
 					#	from third level categories
@@ -68,7 +68,7 @@ class OldCatalog
 																								description:cat_info[:description],
 																								image:cat_info[:image])
 				else
-					cat_url = "#{@url}/#{cat.at('strong').parent['href']}"
+					cat_url = "#{@url}#{cat.at('strong').parent['href']}"
 					category[:products]	<< wrap_as_product(link:cat_url,product_name:cat.at('strong').text.strip.capitalize)
 				end													 
 			end
