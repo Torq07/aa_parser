@@ -7,7 +7,7 @@ require 'nokogiri'
 require "activeadmin"
 
 module Aa_parser
-	class Aa_parser
+	class Parser_client
 		
 		include HTTParty
 
