@@ -8,9 +8,11 @@ require "activeadmin"
 
 module ParserModule
 	class Client
-		
+
 		include HTTParty
 
+		attr_reader :lang
+		
 		def initialize(url)
 			@url = "#{URI(url).scheme}://#{URI(url).host}" 
 			@catalog = {}
