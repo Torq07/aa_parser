@@ -69,7 +69,6 @@ class OldCatalog
 																								image:cat_info[:image])
 				else
 					cat_url = "#{@url}/#{cat.at('strong').parent['href']}"
-					p cat_url
 					category[:products]	<< wrap_as_product(link:cat_url,product_name:cat.at('strong').text.strip.capitalize)
 				end													 
 			end
@@ -89,10 +88,6 @@ class OldCatalog
 		def self.parse_category_products(product_list)
 			product_list.reject{|e| e[:link].nil?}
 				.each do |item|
-				p item[:link]
-				# @b.goto item[:link]
-				# sleep 1 until @b.ready_state.eql? "complete"
-				# page = Nokogiri::HTML.parse(@b.html)
 				ue = @user_agent_list.sample
 				page = Nokogiri::HTML(open(item[:link],"User-Agent" => ue ))
 				image_node = page.css('div#main_cnt_sidebar img').first
