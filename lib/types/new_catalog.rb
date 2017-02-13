@@ -83,7 +83,7 @@ class NewCatalog
 			if product_list_node.any?
 				product_list_node.each do |product|
 					url_node = product.css('div.name a').first
-					url = "#{@url}/#{url_node['href']}"
+					url = "#{@url}#{url_node['href']}"
 					name = url_node.text.strip.capitalize
 					short_description = product.css('div.preview').text
 					category[:products]	<< wrap_as_product(link:url,
@@ -96,7 +96,6 @@ class NewCatalog
 		def self.parse_category_products(product_list)
 			product_list.reject{|e| e[:link].nil?}
 				.each do |item|
-				p item[:link]
 				ue = @user_agent_list.sample
 				page = Nokogiri::HTML(open(item[:link],"User-Agent" => ue ))
 				image_node = page.css('div.picture img').first
