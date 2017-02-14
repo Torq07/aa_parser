@@ -109,7 +109,9 @@ class OldCatalog
 				desc_node.css('div#main_cnt_sidebar').remove
 				
 				if image_node
-					item[:product_image] = "#{@url}#{image_node['src']}"
+					image_address = "#{@url}#{image_node['src']}"
+					item[:product_image] =  image_address 
+				end
 					
 				if desc_node.any?
 					item[:long_description] = desc_node.to_s
