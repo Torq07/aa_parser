@@ -59,7 +59,7 @@ class NewCatalog
 			third_level_categories_node = page.css('table.SubSections div strong a')
 			if third_level_categories_node.any? 
 				sub_categories = third_level_categories_node.map do |cat|
-						cat_url = set_ulr(cat['href'])
+						cat_url = set_url(cat['href'])
 					  wrap_as_category(category_name:cat.text.strip.capitalize,
 														 link:cat_url,
 														 parent:category[:category_name])
