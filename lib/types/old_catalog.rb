@@ -25,7 +25,8 @@ class OldCatalog
 	end
 
 	def grab_second_level_category_links
-		page=Nokogiri::HTML(open("#{@url}/production/catalog","User-Agent" => @user_agent_list.sample))
+		url = set_url("/production/catalog")
+		page=Nokogiri::HTML(open(url,"User-Agent" => @user_agent_list.sample))
 		page.css('div#main_content_navigation ul li')
 				.reject do |li| 
 					# if 'class' attribute exist then it's third level category
@@ -35,8 +36,9 @@ class OldCatalog
 					third_level || not_category
 				end	
 				.each do |li| 
+					url = set_url(li.at('a')['href'])
 					@structure << wrap_as_category(category_name:li.at('a').text.strip.capitalize,
-																				 link:"#{@url}#{li.at('a')['href']}")
+																				 link:url)
 				end	
 	end
 
@@ -46,7 +48,7 @@ class OldCatalog
 			
 			# Save second level category image
 			imgs = page.css('div.catalog_page img')
-			category[:image] = "#{@url}#{imgs.first['src']}" if imgs.any?
+			category[:image] = set_url(imgs.first['src']) if imgs.any?
 
 			# Save second level category description
 			category[:description] = page.css('div.catalog_page p')
@@ -59,7 +61,7 @@ class OldCatalog
 				#if no catalog links then third category links is product link
 				if category_links?(cat)
 
-					cat_url = "#{@url}#{cat.at('strong').parent['href']}"
+					cat_url = set_url("cat.at('strong').parent['href']")
 
 					# Parsing image,description and product list
 					#	from third level categories
@@ -71,7 +73,7 @@ class OldCatalog
 																								description:cat_info[:description],
 																								image:cat_info[:image])
 				else
-					cat_url = "#{@url}#{cat.at('strong').parent['href']}"
+					cat_url = set_url("cat.at('strong').parent['href']")
 					category[:products]	<< wrap_as_product(link:cat_url,product_name:cat.at('strong').text.strip.capitalize)
 				end													 
 			end
@@ -79,6 +81,14 @@ class OldCatalog
 	end
 
 	private
+
+		def set_url(url_fragment)
+			new_url = url_fragment
+			unless URI(url_fragment).host
+				new_url = "#{@url}#{url_fragment}"
+			end	
+			new_url
+		end
 
 		def parse_all_products(categories)
 			categories.each do |category|
@@ -99,7 +109,8 @@ class OldCatalog
 				desc_node.css('div#main_cnt_sidebar').remove
 				
 				if image_node
-					item[:product_image] =  "#{@url}#{image_node['src']}" 
+					image_address = set_url(image_node['src'])
+					item[:product_image] =  image_address 
 				end
 					
 				if desc_node.any?
@@ -121,7 +132,7 @@ class OldCatalog
 
 			# Save category image
 			imgs = page.css('div.catalog_page img')
-			image = "#{@url}#{imgs.first['src']}" if imgs.any?
+			image = set_url(imgs.first['src']) if imgs.any?
 
 			# Save category description
 			description = page.css('div.catalog_page p')
@@ -129,7 +140,7 @@ class OldCatalog
 
 			# Save category products
 			products = page.css('div.catalog_page_productcell a')
-										 .map{|item| wrap_as_product(product_name:item.text,link:"#{@url}#{item['href']}")}
+										 .map{|item| wrap_as_product(product_name:item.text,link:set_url(item['href']) }
 
 			{products:products,image:image, description:description}
 		end

@@ -26,7 +26,8 @@ class NewCatalog
 
 
 	def grab_main_category_links
-		page=Nokogiri::HTML(open("#{@url}/production/catalog","User-Agent" => @user_agent_list.sample))
+		url = set_url("/production/catalog")
+		page=Nokogiri::HTML(open(url,"User-Agent" => @user_agent_list.sample))
 		page.css('div#main_content_navigation ul li')
 				.reject do |li| 
 					# if 'class' attribute exist then it's third level category
@@ -36,8 +37,8 @@ class NewCatalog
 					third_level || not_category
 				end	
 				.each do |li| 
-					@structure << wrap_as_category(category_name:li.at('a').text.strip.capitalize,
-																				 link:"#{@url}#{li.at('a')['href']}")
+					@structure << wrap_as_category( category_name:li.at('a').text.strip.capitalize,
+																				  link:set_url(li.at('a')['href']) )
 				end	
 	end
 
@@ -47,7 +48,7 @@ class NewCatalog
 			
 			# Save category image
 			imgs = page.css('div.SectionPicture img')
-			category[:image] = "#{@url}#{imgs.first['src']}" if imgs.any?
+			category[:image] = set_url(imgs.first['src']) if imgs.any?
 
 			# Save category description
 			category[:description] = page.css('div.SectionText p')
@@ -57,7 +58,7 @@ class NewCatalog
 			third_level_categories_node = page.css('table.SubSections div strong a')
 			if third_level_categories_node.any? 
 				sub_categories = third_level_categories_node.map do |cat|
-						cat_url = "#{@url}/#{cat['href']}"
+						cat_url = set_ulr(cat['href'])
 					  wrap_as_category(category_name:cat.text.strip.capitalize,
 														 link:cat_url,
 														 parent:category[:category_name])
@@ -71,6 +72,14 @@ class NewCatalog
 	end
 
 	private
+
+		def set_url(url_fragment)
+			new_url = url_fragment
+			unless URI(url_fragment).host
+				new_url = "#{@url}#{url_fragment}"
+			end	
+			new_url
+		end
 
 		def parse_all_products(categories)
 			categories.each do |category|
@@ -86,7 +95,7 @@ class NewCatalog
 			if product_list_node.any?
 				product_list_node.each do |product|
 					url_node = product.css('div.name a').first
-					url = "#{@url}#{url_node['href']}"
+					url = set_url(url_node['href'])
 					name = url_node.text.strip.capitalize
 					short_description = product.css('div.preview').text
 					category[:products]	<< wrap_as_product(link:url,
@@ -112,7 +121,7 @@ class NewCatalog
 				desc_node.css('div#main_cnt_sidebar').remove
 				
 				if image_node
-					item[:product_image] =  "#{@url}#{image_node['src']}" 
+					item[:product_image] =  set_url(image_node['src'])
 				end
 					
 				if desc_node.any?
@@ -129,7 +138,7 @@ class NewCatalog
 
 			# Save category image
 			imgs = page.css('div.catalog_page img')
-			image = "#{@url}#{imgs.first['src']}" if imgs.any?
+			image = set_url(imgs.first['src']) if imgs.any?
 
 			# Save category description
 			description = page.css('div.catalog_page p')
