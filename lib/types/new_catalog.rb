@@ -48,7 +48,7 @@ class NewCatalog
 			
 			# Save category image
 			imgs = page.css('div.SectionPicture img')
-			category[:image] = set_url(imgs.first['src']) if imgs.any?
+			category[:image] = "#{@url}#{imgs.first['src']}" if imgs.any?
 
 			# Save category description
 			category[:description] = page.css('div.SectionText p')
@@ -121,7 +121,7 @@ class NewCatalog
 				desc_node.css('div#main_cnt_sidebar').remove
 				
 				if image_node
-					item[:product_image] =  set_url(image_node['src'])
+					item[:product_image] =  "#@url#{image_node['src']}"
 				end
 					
 				if desc_node.any?
@@ -138,7 +138,7 @@ class NewCatalog
 
 			# Save category image
 			imgs = page.css('div.catalog_page img')
-			image = set_url(imgs.first['src']) if imgs.any?
+			image = "#{@url}#{imgs.first['src']}" if imgs.any?
 
 			# Save category description
 			description = page.css('div.catalog_page p')

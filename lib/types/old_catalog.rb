@@ -48,7 +48,7 @@ class OldCatalog
 			
 			# Save second level category image
 			imgs = page.css('div.catalog_page img')
-			category[:image] = set_url(imgs.first['src']) if imgs.any?
+			category[:image] = "#{@url}#{imgs.first['src']}" if imgs.any?
 
 			# Save second level category description
 			category[:description] = page.css('div.catalog_page p')
@@ -73,7 +73,7 @@ class OldCatalog
 																								description:cat_info[:description],
 																								image:cat_info[:image])
 				else
-					cat_url = set_url("cat.at('strong').parent['href']")
+					cat_url = set_url(cat.at('strong').parent['href'])
 					category[:products]	<< wrap_as_product(link:cat_url,product_name:cat.at('strong').text.strip.capitalize)
 				end													 
 			end
@@ -109,9 +109,7 @@ class OldCatalog
 				desc_node.css('div#main_cnt_sidebar').remove
 				
 				if image_node
-					image_address = set_url(image_node['src'])
-					item[:product_image] =  image_address 
-				end
+					item[:product_image] = "#{@url}#{image_node['src']}"
 					
 				if desc_node.any?
 					item[:long_description] = desc_node.to_s
@@ -132,7 +130,7 @@ class OldCatalog
 
 			# Save category image
 			imgs = page.css('div.catalog_page img')
-			image = set_url(imgs.first['src']) if imgs.any?
+			image = "#{@url}#{imgs.first['src']}" if imgs.any?
 
 			# Save category description
 			description = page.css('div.catalog_page p')
