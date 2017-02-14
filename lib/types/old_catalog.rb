@@ -61,7 +61,7 @@ class OldCatalog
 				#if no catalog links then third category links is product link
 				if category_links?(cat)
 
-					cat_url = set_url("cat.at('strong').parent['href']")
+					cat_url = set_url(cat.at('strong').parent['href'])
 
 					# Parsing image,description and product list
 					#	from third level categories
