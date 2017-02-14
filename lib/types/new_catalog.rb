@@ -1,6 +1,6 @@
 class NewCatalog
 	
-	def self.execute(url)
+	def initialize(url)
 		@url = url
 		@user_agent_list = [
 												"Mozilla/5.0 (Windows; U; Windows NT 5.1; de; rv:1.9.2.3) Gecko/20100401 Firefox/3.6.3 (FM Scene 4.6.1)",
@@ -16,13 +16,16 @@ class NewCatalog
 												"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0"
 											 ]
 		@structure = []
+	end
+
+	def execute
 		grab_main_category_links
 		grab_category_content(@structure)
 		parse_all_products(@structure)
 	end
 
 
-	def self.grab_main_category_links
+	def grab_main_category_links
 		page=Nokogiri::HTML(open("#{@url}/production/catalog","User-Agent" => @user_agent_list.sample))
 		page.css('div#main_content_navigation ul li')
 				.reject do |li| 
@@ -38,7 +41,7 @@ class NewCatalog
 				end	
 	end
 
-	def self.grab_category_content(parent_categories)
+	def grab_category_content(parent_categories)
 		parent_categories.each do |category|
 			page=Nokogiri::HTML(open(category[:link],"User-Agent" => @user_agent_list.sample))
 			
@@ -69,7 +72,7 @@ class NewCatalog
 
 	private
 
-		def self.parse_all_products(categories)
+		def parse_all_products(categories)
 			categories.each do |category|
 				parse_category_products(category[:products])
 				parse_all_products(category[:childs]) if category[:childs].any?
@@ -77,7 +80,7 @@ class NewCatalog
 			categories
 		end
 
-		def self.save_products_links(page,category)
+		def save_products_links(page,category)
 			# Grab products from category 
 			product_list_node = page.css('div.ProductsList div.row')
 			if product_list_node.any?
@@ -93,7 +96,7 @@ class NewCatalog
 			end	
 		end
 
-		def self.parse_category_products(product_list)
+		def parse_category_products(product_list)
 			product_list.reject{|e| e[:link].nil?}
 				.each do |item|
 				ue = @user_agent_list.sample
@@ -118,7 +121,7 @@ class NewCatalog
 			end
 		end
 
-		def self.grab_category_info(url)
+		def grab_category_info(url)
 			products = []
 			image = ''
 			description = ''
@@ -135,7 +138,7 @@ class NewCatalog
 			{image:image, description:description}
 		end
 
-		def self.wrap_as_product(opt={})
+		def wrap_as_product(opt={})
 			{ 
 				link:opt[:link], 
 				product_name:opt[:product_name],
@@ -151,7 +154,7 @@ class NewCatalog
 			}
 		end
 
-		def self.wrap_as_category(opt={})
+		def wrap_as_category(opt={})
 			 {
 				category_name:opt[:category_name],
 				link:opt[:link],

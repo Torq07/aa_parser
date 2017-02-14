@@ -1,6 +1,6 @@
 class OldCatalog
 
-	def self.execute(url)
+	def initialize(url)
 		@url = url
 		@user_agent_list = [
 												"Mozilla/5.0 (Windows; U; Windows NT 5.1; de; rv:1.9.2.3) Gecko/20100401 Firefox/3.6.3 (FM Scene 4.6.1)",
@@ -16,12 +16,15 @@ class OldCatalog
 												"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0"
 											 ]
 		@structure = []
+	end
+
+	def execute
 		grab_second_level_category_links
 		grab_third_level_category_links
 		parse_all_products(@structure)
 	end
 
-	def self.grab_second_level_category_links
+	def grab_second_level_category_links
 		page=Nokogiri::HTML(open("#{@url}/production/catalog","User-Agent" => @user_agent_list.sample))
 		page.css('div#main_content_navigation ul li')
 				.reject do |li| 
@@ -37,7 +40,7 @@ class OldCatalog
 				end	
 	end
 
-	def self.grab_third_level_category_links
+	def grab_third_level_category_links
 		@structure.each do |category|
 			page=Nokogiri::HTML(open(category[:link],"User-Agent" => @user_agent_list.sample))
 			
@@ -77,7 +80,7 @@ class OldCatalog
 
 	private
 
-		def self.parse_all_products(categories)
+		def parse_all_products(categories)
 			categories.each do |category|
 				parse_category_products(category[:products])
 				parse_all_products(category[:childs]) if category[:childs].any?
@@ -85,7 +88,7 @@ class OldCatalog
 			categories
 		end
 
-		def self.parse_category_products(product_list)
+		def parse_category_products(product_list)
 			product_list.reject{|e| e[:link].nil?}
 				.each do |item|
 				ue = @user_agent_list.sample
@@ -105,12 +108,12 @@ class OldCatalog
 			end
 		end
 
-		def self.category_links?(category_node)
+		def category_links?(category_node)
 			category_products = category_node.css('ul.catalog_links li')
 			category_links = category_products.any?
 		end
 
-		def self.grab_category_info(url)
+		def grab_category_info(url)
 			products = []
 			image = ''
 			description = ''
@@ -131,7 +134,7 @@ class OldCatalog
 			{products:products,image:image, description:description}
 		end
 
-		def self.wrap_as_product(opt={})
+		def wrap_as_product(opt={})
 			{ 
 				link:opt[:link], 
 				product_name:opt[:product_name],
@@ -147,7 +150,7 @@ class OldCatalog
 			}
 		end
 
-		def self.wrap_as_category(opt={})
+		def wrap_as_category(opt={})
 			 {
 				category_name:opt[:category_name],
 				link:opt[:link],

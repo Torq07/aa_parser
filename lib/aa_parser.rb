@@ -20,7 +20,8 @@ module ParserModule
 		end
 
 		def run
-			@catalog[@lang] = new_catalog? ? NewCatalog.execute(@url) : OldCatalog.execute(@url)
+			@catalog[@lang] = new_catalog? ? NewCatalog.new(@url) : OldCatalog.new(@url)
+			@catalog[@lang].execute
 			@catalog
 		end
 
