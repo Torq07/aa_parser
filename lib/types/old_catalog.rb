@@ -140,7 +140,7 @@ class OldCatalog
 
 			# Save category products
 			products = page.css('div.catalog_page_productcell a')
-										 .map{|item| wrap_as_product(product_name:item.text,link:set_url(item['href']) }
+										 .map{ |item| wrap_as_product(product_name:item.text,link: set_url(item['href']) ) }
 
 			{products:products,image:image, description:description}
 		end
