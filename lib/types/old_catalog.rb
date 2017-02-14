@@ -25,7 +25,7 @@ class OldCatalog
 	end
 
 	def grab_second_level_category_links
-		url = set_url("/production/catalog")
+		url = "#{@url}/production/catalog"
 		page=Nokogiri::HTML(open(url,"User-Agent" => @user_agent_list.sample))
 		page.css('div#main_content_navigation ul li')
 				.reject do |li| 

@@ -26,7 +26,7 @@ class NewCatalog
 
 
 	def grab_main_category_links
-		url = set_url("/production/catalog")
+		url = "#{@url}/production/catalog"
 		page=Nokogiri::HTML(open(url,"User-Agent" => @user_agent_list.sample))
 		page.css('div#main_content_navigation ul li')
 				.reject do |li| 
@@ -37,8 +37,9 @@ class NewCatalog
 					third_level || not_category
 				end	
 				.each do |li| 
+					url = set_url(li.at('a')['href'])
 					@structure << wrap_as_category( category_name:li.at('a').text.strip.capitalize,
-																				  link:set_url(li.at('a')['href']) )
+																				  link:url )
 				end	
 	end
 
@@ -95,7 +96,7 @@ class NewCatalog
 			if product_list_node.any?
 				product_list_node.each do |product|
 					url_node = product.css('div.name a').first
-					url = set_url(url_node['href'])
+					url = "#{@url}#{url_node['href']}"
 					name = url_node.text.strip.capitalize
 					short_description = product.css('div.preview').text
 					category[:products]	<< wrap_as_product(link:url,
